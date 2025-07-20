@@ -1,0 +1,6 @@
+export const READING_STATUS = {
+  WANT_TO_READ: "WANT_TO_READ",
+  READING: "READING",
+  FINISHED: "FINISHED",
+  ON_HOLD: "ON_HOLD",
+} as const;
