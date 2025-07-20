@@ -1,9 +1,14 @@
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Radio from "@/components/ui/Radio/Radio";
+import BookList from "@/components/book/BookList";
+import { BookRecord } from "@/types/book";
+import { useQuery } from "@tanstack/react-query";
 import Head from "next/head";
 
 export default function Home() {
+  const { data: books } = useQuery<BookRecord[]>({
+    queryKey: ["books"],
+    queryFn: () => fetch("/api/book").then((res) => res.json()),
+  });
+
   return (
     <>
       <Head>
@@ -13,14 +18,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <div>독서 기록</div>
-        <Input placeholder="테스트" />
-        <Input placeholder="테스트" disabled />
-        <Button>테스트</Button>
-        <Button disabled>테스트</Button>
-        <Radio label="테스트" name="test" />
-        <Radio label="테스트2" name="test" />
-        <Radio label="테스트3" name="test" disabled />
+        <h1>독서 기록</h1>
+        <BookList books={books} />
       </div>
     </>
   );
