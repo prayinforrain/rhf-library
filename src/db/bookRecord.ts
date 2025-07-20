@@ -18,6 +18,7 @@ export const BookRecords: BookRecord[] = [
     isPublic: false,
     createdAt: "2024-01-15T10:30:00Z",
     updatedAt: "2024-01-15T10:30:00Z",
+    deletedAt: null,
   },
   {
     id: "2",
@@ -36,6 +37,7 @@ export const BookRecords: BookRecord[] = [
     isPublic: false,
     createdAt: "2024-01-16T14:20:00Z",
     updatedAt: "2024-01-16T14:20:00Z",
+    deletedAt: null,
   },
   {
     id: "3",
@@ -54,6 +56,7 @@ export const BookRecords: BookRecord[] = [
     isPublic: false,
     createdAt: "2024-01-17T09:15:00Z",
     updatedAt: "2024-01-17T09:15:00Z",
+    deletedAt: null,
   },
   {
     id: "4",
@@ -72,6 +75,7 @@ export const BookRecords: BookRecord[] = [
     isPublic: false,
     createdAt: "2024-01-18T16:45:00Z",
     updatedAt: "2024-01-18T16:45:00Z",
+    deletedAt: null,
   },
   {
     id: "5",
@@ -90,5 +94,6 @@ export const BookRecords: BookRecord[] = [
     isPublic: false,
     createdAt: "2024-01-19T11:30:00Z",
     updatedAt: "2024-01-19T11:30:00Z",
+    deletedAt: null,
   },
 ];
