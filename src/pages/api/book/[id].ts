@@ -32,13 +32,16 @@ export default function handler(
     res.status(204).end();
   }
   if (req.method === "PATCH") {
-    const body = req.body;
-    const book = BookRecords.find((b) => b.id === body.id);
+    const body = JSON.parse(req.body);
+    const { id } = req.query;
+    const book = BookRecords.find((b) => b.id === id);
+    const index = BookRecords.findIndex((b) => b.id === id);
     if (!book) {
       res.status(404).json({ error: "Book not found" });
       return;
     }
     const updatedBook = { ...book, ...body };
+    BookRecords[index] = updatedBook;
     res.status(200).json(updatedBook);
   }
 }
