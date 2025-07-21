@@ -1,7 +1,22 @@
 import BookList from "@/components/book/BookList";
+import Button from "@/components/ui/Button";
 import { BookRecord } from "@/types/book";
+import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
 import Head from "next/head";
+import Link from "next/link";
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  & > h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+`;
 
 export default function Home() {
   const { data: books } = useQuery<BookRecord[]>({
@@ -18,7 +33,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <h1>독서 기록</h1>
+        <Header>
+          <h1>독서 기록</h1>
+          <Link href="/new">
+            <Button>새 책 추가</Button>
+          </Link>
+        </Header>
         <BookList books={books} />
       </div>
     </>

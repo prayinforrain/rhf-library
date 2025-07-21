@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { BookRecord } from "@/types/book";
 import BookDetail from "@/components/book/BookDetail";
+import { NEW_BOOK_ID } from "@/constants/newBook";
 
 const BookDetailPage = () => {
   const router = useRouter();
@@ -10,7 +11,7 @@ const BookDetailPage = () => {
   const { data: book, isLoading } = useQuery<BookRecord>({
     queryKey: ["book", id],
     queryFn: () => fetch(`/api/book/${id}`).then((res) => res.json()),
-    enabled: !!id,
+    enabled: !!id && id !== NEW_BOOK_ID,
   });
 
   return (
@@ -18,7 +19,7 @@ const BookDetailPage = () => {
       <h1>BookDetail</h1>
       {isLoading ? (
         <div>Loading...</div>
-      ) : book ? (
+      ) : book || id === NEW_BOOK_ID ? (
         <BookDetail book={book} />
       ) : (
         <div>Book not found</div>

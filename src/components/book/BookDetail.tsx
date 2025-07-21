@@ -9,6 +9,8 @@ import RatingForm from "./form/RatingForm";
 import ReviewForm from "./form/ReviewForm";
 import QuoteForm from "./form/QuoteForm";
 import PublicForm from "./form/PublicForm";
+import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
+import { useRouter } from "next/router";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -34,7 +36,11 @@ const ButtonGroup = styled.div`
   width: auto;
 `;
 
-const BookDetail = ({ book }: { book: BookRecord }) => {
+const BookDetail = ({
+  book = NEW_BOOK_DEFAULT_VALUE,
+}: {
+  book?: BookRecord;
+}) => {
   const formMethods = useForm({
     defaultValues: {
       ...book,
@@ -42,6 +48,7 @@ const BookDetail = ({ book }: { book: BookRecord }) => {
   });
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { handleSubmit } = formMethods;
   const { mutate: updateBook } = useMutation({
@@ -55,8 +62,26 @@ const BookDetail = ({ book }: { book: BookRecord }) => {
     },
   });
 
+  const { mutate: createBook } = useMutation({
+    mutationFn: async (data: BookRecord) => {
+      console.log(data);
+      console.log(JSON.stringify(data));
+      const response = await fetch(`/api/book`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      const newBook = await response.json();
+      router.push(`/${newBook.id}`);
+      return newBook;
+    },
+  });
+
   const onSubmit = (data: BookRecord) => {
-    updateBook(data);
+    if (book.id === NEW_BOOK_ID) {
+      createBook(data);
+    } else {
+      updateBook(data);
+    }
   };
 
   return (

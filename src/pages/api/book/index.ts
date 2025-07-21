@@ -28,11 +28,11 @@ export default function handler(
   res: NextApiResponse<BookRecord[] | ErrorResponse>
 ) {
   if (req.method === "POST") {
-    const book = req.body;
+    const book = JSON.parse(req.body);
     const newBook = {
       ...EMPTY_BOOK,
-      id: `${BookRecords.length + 1}`,
       ...book,
+      id: `${BookRecords.length + 1}`,
     };
     BookRecords.push(newBook);
     res.status(200).json(newBook);
