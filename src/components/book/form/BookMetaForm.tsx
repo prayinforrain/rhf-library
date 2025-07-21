@@ -25,10 +25,16 @@ const BookInfoItemValue = styled.dd`
   font-weight: 400;
 `;
 
-const BookMeta = () => {
+const BookMetaForm = () => {
   const { register } = useFormContext();
   return (
     <BookInfoSection>
+      <BookInfoItem>
+        <BookInfoItemLabel>제목</BookInfoItemLabel>
+        <BookInfoItemValue>
+          <Input {...register("title")} />
+        </BookInfoItemValue>
+      </BookInfoItem>
       <BookInfoItem>
         <BookInfoItemLabel>저자</BookInfoItemLabel>
         <BookInfoItemValue>
@@ -57,4 +63,4 @@ const BookMeta = () => {
   );
 };
 
-export default BookMeta;
+export default BookMetaForm;

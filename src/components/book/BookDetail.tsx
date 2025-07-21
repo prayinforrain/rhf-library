@@ -2,7 +2,7 @@ import { BookRecord } from "@/types/book";
 import styled from "@emotion/styled";
 import { FormProvider, useForm } from "react-hook-form";
 import Button from "../ui/Button";
-import BookMeta from "./BookMeta";
+import BookMetaForm from "./form/BookMetaForm";
 import { useMutation } from "@tanstack/react-query";
 import StatusForm from "./form/StatusForm";
 import RatingForm from "./form/RatingForm";
@@ -60,7 +60,7 @@ const BookDetail = ({ book }: { book: BookRecord }) => {
     <BookDetailWrapper>
       <BookTitle>{book.title}</BookTitle>
       <FormProvider {...formMethods}>
-        <BookMeta />
+        <BookMetaForm />
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/* 1단계 */}
           <StatusForm />
