@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { BookRecord } from "@/types/book";
-import BookDetail from "@/components/book/bookDetail";
+import BookDetail from "@/components/book/BookDetail";
 
 const BookDetailPage = () => {
   const router = useRouter();

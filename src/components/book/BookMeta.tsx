@@ -1,5 +1,6 @@
-import { BookRecord } from "@/types/book";
+import Input from "@/components/ui/Input";
 import styled from "@emotion/styled";
+import { useFormContext } from "react-hook-form";
 
 const BookInfoSection = styled.dl`
   display: flex;
@@ -11,6 +12,7 @@ const BookInfoItem = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  align-items: center;
 `;
 
 const BookInfoItemLabel = styled.dt`
@@ -23,24 +25,33 @@ const BookInfoItemValue = styled.dd`
   font-weight: 400;
 `;
 
-const BookMeta = ({ book }: { book: BookRecord }) => {
+const BookMeta = () => {
+  const { register } = useFormContext();
   return (
     <BookInfoSection>
       <BookInfoItem>
         <BookInfoItemLabel>저자</BookInfoItemLabel>
-        <BookInfoItemValue>{book.author}</BookInfoItemValue>
+        <BookInfoItemValue>
+          <Input {...register("author")} />
+        </BookInfoItemValue>
       </BookInfoItem>
       <BookInfoItem>
         <BookInfoItemLabel>출판사</BookInfoItemLabel>
-        <BookInfoItemValue>{book.publisher}</BookInfoItemValue>
+        <BookInfoItemValue>
+          <Input {...register("publisher")} />
+        </BookInfoItemValue>
       </BookInfoItem>
       <BookInfoItem>
         <BookInfoItemLabel>출판일</BookInfoItemLabel>
-        <BookInfoItemValue>{book.publicationDate}</BookInfoItemValue>
+        <BookInfoItemValue>
+          <Input type="date" {...register("publicationDate")} />
+        </BookInfoItemValue>
       </BookInfoItem>
       <BookInfoItem>
         <BookInfoItemLabel>총 페이지</BookInfoItemLabel>
-        <BookInfoItemValue>{book.totalPages}</BookInfoItemValue>
+        <BookInfoItemValue>
+          <Input type="number" {...register("totalPages")} />
+        </BookInfoItemValue>
       </BookInfoItem>
     </BookInfoSection>
   );
