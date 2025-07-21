@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { FormProvider, useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import BookMetaForm from "./form/BookMetaForm";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import StatusForm from "./form/StatusForm";
 import RatingForm from "./form/RatingForm";
 import ReviewForm from "./form/ReviewForm";
@@ -41,6 +41,8 @@ const BookDetail = ({ book }: { book: BookRecord }) => {
     },
   });
 
+  const queryClient = useQueryClient();
+
   const { handleSubmit } = formMethods;
   const { mutate: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
@@ -48,6 +50,7 @@ const BookDetail = ({ book }: { book: BookRecord }) => {
         method: "PATCH",
         body: JSON.stringify(data),
       });
+      queryClient.invalidateQueries({ queryKey: ["book", book.id] });
       return response.json();
     },
   });
