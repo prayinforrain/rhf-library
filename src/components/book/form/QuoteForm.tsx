@@ -25,6 +25,9 @@ const QuoteForm = () => {
     control,
     name: "quotes",
   });
+
+  const isPageRequired = fields.length > 1;
+
   return (
     <Field>
       <FieldLabel>
@@ -57,7 +60,13 @@ const QuoteForm = () => {
                 type="number"
                 min={1}
                 max={totalPages ?? 0}
-                {...register(`quotes.${index}.pageNumber`)}
+                {...register(`quotes.${index}.pageNumber`, {
+                  required: isPageRequired,
+                  max: {
+                    value: totalPages,
+                    message: "책의 페이지 번호를 초과할 수 없습니다.",
+                  },
+                })}
                 style={{ width: "auto" }}
               />
               <Button type="button" onClick={() => remove(index)}>

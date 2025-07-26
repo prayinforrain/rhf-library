@@ -68,8 +68,6 @@ const BookDetail = ({
 
   const { mutate: createBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
-      console.log(data);
-      console.log(JSON.stringify(data));
       const response = await fetch(`/api/book`, {
         method: "POST",
         body: JSON.stringify(data),
@@ -81,13 +79,18 @@ const BookDetail = ({
   });
 
   const onSubmit = (data: BookRecord) => {
-    console.log(data);
-    return;
     if (book.id === NEW_BOOK_ID) {
       createBook(data);
     } else {
       updateBook(data);
     }
+  };
+
+  const onNextStep = async () => {
+    if (step === MAX_STEP) return;
+    const isValid = await formMethods.trigger();
+    if (!isValid) return;
+    setStep(step + 1);
   };
 
   return (
@@ -120,7 +123,7 @@ const BookDetail = ({
             </Button>
             <Button
               type="button"
-              onClick={() => setStep(step + 1)}
+              onClick={onNextStep}
               disabled={step === MAX_STEP}
             >
               다음

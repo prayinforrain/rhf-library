@@ -39,12 +39,16 @@ const StatusForm = () => {
         <RowGroup>
           <Input
             type="date"
-            {...register("startDate")}
+            {...register("startDate", {
+              required: bookStatus !== READING_STATUS.WANT_TO_READ,
+            })}
             disabled={bookStatus === READING_STATUS.WANT_TO_READ}
           />
           <Input
             type="date"
-            {...register("endDate")}
+            {...register("endDate", {
+              required: bookStatus === READING_STATUS.FINISHED,
+            })}
             disabled={bookStatus !== READING_STATUS.FINISHED}
           />
         </RowGroup>

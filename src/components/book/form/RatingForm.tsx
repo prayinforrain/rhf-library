@@ -21,7 +21,16 @@ const RatingForm = () => {
             min={0}
             max={5}
             step={0.5}
-            {...register("rating")}
+            {...register("rating", {
+              required: true,
+              validate: (value) => {
+                const valueNumber = Number(value);
+                if (valueNumber % 0.5 !== 0) {
+                  return "0.5 단위로 입력해주세요.";
+                }
+                return true;
+              },
+            })}
           />
         </RowGroup>
       </Field>
