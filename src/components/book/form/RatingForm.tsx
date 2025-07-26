@@ -4,7 +4,10 @@ import { useFormContext } from "react-hook-form";
 import Checkbox from "@/components/ui/Checkbox";
 
 const RatingForm = () => {
-  const { register } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   return (
     <>
       <Field>
@@ -22,7 +25,10 @@ const RatingForm = () => {
             max={5}
             step={0.5}
             {...register("rating", {
-              required: true,
+              required: {
+                value: true,
+                message: "평점을 입력해주세요.",
+              },
               validate: (value) => {
                 const valueNumber = Number(value);
                 if (valueNumber % 0.5 !== 0) {

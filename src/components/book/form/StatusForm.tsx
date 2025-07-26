@@ -5,7 +5,11 @@ import { useFormContext, useWatch } from "react-hook-form";
 import Input from "@/components/ui/Input";
 
 const StatusForm = () => {
-  const { register, control } = useFormContext();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext();
   const bookStatus = useWatch({ control, name: "readingStatus" });
   return (
     <>
@@ -40,14 +44,20 @@ const StatusForm = () => {
           <Input
             type="date"
             {...register("startDate", {
-              required: bookStatus !== READING_STATUS.WANT_TO_READ,
+              required: {
+                value: bookStatus !== READING_STATUS.WANT_TO_READ,
+                message: "시작 날짜를 입력해주세요.",
+              },
             })}
             disabled={bookStatus === READING_STATUS.WANT_TO_READ}
           />
           <Input
             type="date"
             {...register("endDate", {
-              required: bookStatus === READING_STATUS.FINISHED,
+              required: {
+                value: bookStatus === READING_STATUS.FINISHED,
+                message: "종료 날짜를 입력해주세요.",
+              },
             })}
             disabled={bookStatus !== READING_STATUS.FINISHED}
           />

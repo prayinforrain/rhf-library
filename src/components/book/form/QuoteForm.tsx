@@ -19,7 +19,11 @@ const QuoteList = styled.ul`
 `;
 
 const QuoteForm = () => {
-  const { register, control } = useFormContext();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext();
   const totalPages = useWatch({ control, name: "totalPages" });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -61,7 +65,10 @@ const QuoteForm = () => {
                 min={1}
                 max={totalPages ?? 0}
                 {...register(`quotes.${index}.pageNumber`, {
-                  required: isPageRequired,
+                  required: {
+                    value: isPageRequired,
+                    message: "페이지 번호를 입력해주세요.",
+                  },
                   max: {
                     value: totalPages,
                     message: "책의 페이지 번호를 초과할 수 없습니다.",
