@@ -11,6 +11,7 @@ import QuoteForm from "./form/QuoteForm";
 import PublicForm from "./form/PublicForm";
 import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -47,6 +48,9 @@ const BookDetail = ({
     },
   });
 
+  const [step, setStep] = useState(0);
+  const MAX_STEP = 4;
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -77,6 +81,8 @@ const BookDetail = ({
   });
 
   const onSubmit = (data: BookRecord) => {
+    console.log(data);
+    return;
     if (book.id === NEW_BOOK_ID) {
       createBook(data);
     } else {
@@ -88,19 +94,37 @@ const BookDetail = ({
     <BookDetailWrapper>
       <BookTitle>{book.title}</BookTitle>
       <FormProvider {...formMethods}>
-        <BookMetaForm />
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/* 1단계 */}
-          <StatusForm />
+          {step === 0 && (
+            <>
+              <BookMetaForm />
+              <StatusForm />
+            </>
+          )}
           {/* 2단계 */}
-          <RatingForm />
+          {step === 1 && <RatingForm />}
           {/* 3단계 */}
-          <ReviewForm />
+          {step === 2 && <ReviewForm />}
           {/* 4단계 */}
-          <QuoteForm />
+          {step === 3 && <QuoteForm />}
           {/* 5단계 */}
-          <PublicForm />
+          {step === 4 && <PublicForm />}
           <ButtonGroup>
+            <Button
+              type="button"
+              onClick={() => setStep(step - 1)}
+              disabled={step === 0}
+            >
+              이전
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setStep(step + 1)}
+              disabled={step === MAX_STEP}
+            >
+              다음
+            </Button>
             <Button type="submit">저장</Button>
           </ButtonGroup>
         </Form>
