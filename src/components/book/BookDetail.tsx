@@ -89,7 +89,11 @@ const BookDetail = ({
   const onNextStep = async () => {
     if (step === MAX_STEP) return;
     const isValid = await formMethods.trigger();
-    if (!isValid) return;
+    if (!isValid) {
+      const firstError = Object.keys(formMethods.formState.errors)[0];
+      formMethods.setFocus(firstError as keyof BookRecord);
+      return;
+    }
     setStep(step + 1);
   };
 
