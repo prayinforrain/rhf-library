@@ -55,7 +55,7 @@ const BookDetail = ({
   const router = useRouter();
 
   const { handleSubmit } = formMethods;
-  const { mutate: updateBook } = useMutation({
+  const { mutateAsync: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
       const response = await fetch(`/api/book/${book.id}`, {
         method: "PATCH",
@@ -66,7 +66,7 @@ const BookDetail = ({
     },
   });
 
-  const { mutate: createBook } = useMutation({
+  const { mutateAsync: createBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
       const response = await fetch(`/api/book`, {
         method: "POST",
@@ -78,12 +78,13 @@ const BookDetail = ({
     },
   });
 
-  const onSubmit = (data: BookRecord) => {
+  const onSubmit = async (data: BookRecord) => {
     if (book.id === NEW_BOOK_ID) {
-      createBook(data);
+      await createBook(data);
     } else {
-      updateBook(data);
+      await updateBook(data);
     }
+    router.push("/");
   };
 
   const onNextStep = async () => {
@@ -125,14 +126,20 @@ const BookDetail = ({
             >
               이전
             </Button>
-            <Button
-              type="button"
-              onClick={onNextStep}
-              disabled={step === MAX_STEP}
-            >
-              다음
-            </Button>
-            <Button type="submit">저장</Button>
+            {step !== MAX_STEP ? (
+              <Button
+                key="nextButton"
+                type="button"
+                onClick={onNextStep}
+                disabled={step === MAX_STEP}
+              >
+                다음
+              </Button>
+            ) : (
+              <Button key="submitButton" type="submit">
+                저장
+              </Button>
+            )}
           </ButtonGroup>
         </Form>
       </FormProvider>
