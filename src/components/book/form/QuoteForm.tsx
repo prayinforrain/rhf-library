@@ -3,6 +3,8 @@ import { Field, FieldLabel, RowGroup } from "./Field";
 import Input from "@/components/ui/Input";
 import styled from "@emotion/styled";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import ErrorWrapper from "./ErrorWrapper";
+import { RHFFormError } from "@/types/rhf-error";
 
 const ButtonGroup = styled.div`
   display: flex;
@@ -32,6 +34,16 @@ const QuoteForm = () => {
 
   const isPageRequired = fields.length > 1;
 
+  const quoteErrors = errors.quotes as unknown as
+    | (
+        | {
+            text: RHFFormError;
+            pageNumber: RHFFormError;
+          }
+        | undefined
+      )[]
+    | undefined;
+
   return (
     <Field>
       <FieldLabel>
@@ -55,27 +67,36 @@ const QuoteForm = () => {
         {fields.map((field, index) => (
           <li key={field.id}>
             <RowGroup>
-              <Input
-                type="text"
-                {...register(`quotes.${index}.text`)}
-                placeholder="인용구를 입력해주세요."
-              />
-              <Input
-                type="number"
-                min={1}
-                max={totalPages ?? 0}
-                {...register(`quotes.${index}.pageNumber`, {
-                  required: {
-                    value: isPageRequired,
-                    message: "페이지 번호를 입력해주세요.",
-                  },
-                  max: {
-                    value: totalPages,
-                    message: "책의 페이지 번호를 초과할 수 없습니다.",
-                  },
-                })}
-                style={{ width: "auto" }}
-              />
+              <ErrorWrapper error={quoteErrors?.[index]?.text}>
+                <Input
+                  type="text"
+                  {...register(`quotes.${index}.text`, {
+                    required: {
+                      value: true,
+                      message: "인용구를 입력해주세요.",
+                    },
+                  })}
+                  placeholder="인용구를 입력해주세요."
+                />
+              </ErrorWrapper>
+              <ErrorWrapper error={quoteErrors?.[index]?.pageNumber}>
+                <Input
+                  type="number"
+                  min={1}
+                  max={totalPages ?? 0}
+                  {...register(`quotes.${index}.pageNumber`, {
+                    required: {
+                      value: isPageRequired,
+                      message: "페이지 번호를 입력해주세요.",
+                    },
+                    max: {
+                      value: totalPages,
+                      message: "책의 페이지 번호를 초과할 수 없습니다.",
+                    },
+                  })}
+                  style={{ width: "auto" }}
+                />
+              </ErrorWrapper>
               <Button type="button" onClick={() => remove(index)}>
                 삭제
               </Button>
