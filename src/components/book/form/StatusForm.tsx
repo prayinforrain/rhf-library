@@ -1,4 +1,4 @@
-import Radio from "@/components/ui/Radio/Radio";
+import Radio from "@/components/ui/Radio";
 import { Field, FieldLabel, RowGroup } from "./Field";
 import { READING_STATUS } from "@/constants/readingStatus";
 import { useFormContext, useWatch } from "react-hook-form";
