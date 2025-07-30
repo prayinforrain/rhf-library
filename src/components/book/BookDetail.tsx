@@ -12,6 +12,7 @@ import PublicForm from "./form/PublicForm";
 import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { patchBook, postBook } from "@/services/book";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -57,22 +58,15 @@ const BookDetail = ({
   const { handleSubmit } = formMethods;
   const { mutateAsync: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
-      const response = await fetch(`/api/book/${book.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      const response = await patchBook(data);
       queryClient.invalidateQueries({ queryKey: ["book", book.id] });
-      return response.json();
+      return response;
     },
   });
 
   const { mutateAsync: createBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
-      const response = await fetch(`/api/book`, {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      const newBook = await response.json();
+      const newBook = await postBook(data);
       router.push(`/${newBook.id}`);
       return newBook;
     },
