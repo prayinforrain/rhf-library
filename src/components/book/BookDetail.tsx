@@ -59,8 +59,11 @@ const BookDetail = ({
   const { mutateAsync: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
       const response = await patchBook(data);
-      queryClient.invalidateQueries({ queryKey: ["book", book.id] });
+      queryClient.setQueryData(["book", book.id], response);
       return response;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["book", book.id] });
     },
   });
 
