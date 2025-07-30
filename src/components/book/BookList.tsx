@@ -18,7 +18,7 @@ const Empty = styled.div`
 const BookList = ({ books }: { books: BookRecord[] | undefined }) => {
   return (
     <BookListWrapper>
-      {!books ? (
+      {books == null ? (
         <Empty>
           <span>로딩중...</span>
         </Empty>
