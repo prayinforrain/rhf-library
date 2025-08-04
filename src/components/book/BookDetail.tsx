@@ -13,6 +13,7 @@ import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { patchBook, postBook } from "@/services/book";
+import Steps from "./form/Steps";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -70,8 +71,16 @@ const BookDetail = ({
   const { mutateAsync: createBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
       const newBook = await postBook(data);
+      queryClient.setQueryData(["book", newBook.id], newBook);
+      queryClient.setQueryData(["books"], (old: BookRecord[]) => [
+        ...old,
+        newBook,
+      ]);
       router.push(`/${newBook.id}`);
       return newBook;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
     },
   });
 
@@ -100,21 +109,21 @@ const BookDetail = ({
       <BookTitle>{book.title}</BookTitle>
       <FormProvider {...formMethods}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          {/* 1단계 */}
-          {step === 0 && (
-            <>
-              <BookMetaForm />
-              <StatusForm />
-            </>
-          )}
-          {/* 2단계 */}
-          {step === 1 && <RatingForm />}
-          {/* 3단계 */}
-          {step === 2 && <ReviewForm />}
-          {/* 4단계 */}
-          {step === 3 && <QuoteForm />}
-          {/* 5단계 */}
-          {step === 4 && <PublicForm />}
+          <Steps
+            currentStep={step}
+            cases={{
+              0: (
+                <>
+                  <BookMetaForm />
+                  <StatusForm />
+                </>
+              ),
+              1: <RatingForm />,
+              2: <ReviewForm />,
+              3: <QuoteForm />,
+              4: <PublicForm />,
+            }}
+          />
           <ButtonGroup>
             <Button
               type="button"
