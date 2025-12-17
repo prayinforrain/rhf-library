@@ -11,9 +11,10 @@ import QuoteForm from "./form/QuoteForm";
 import PublicForm from "./form/PublicForm";
 import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { patchBook, postBook } from "@/services/book";
 import Steps from "./form/Steps";
+import useFormStorage from "@/hooks/useFormStorage";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -56,7 +57,24 @@ const BookDetail = ({
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, watch, reset } = formMethods;
+
+  const { clearStorage } = useFormStorage({
+    storageKey: `book-detail-${book.id}`,
+    watch,
+    reset,
+    setStep,
+    step,
+  });
+
+  useEffect(() => {
+    // 새로고침이 아닌 수단으로 페이지 이탈시 storage 초기화
+    router.events.on("routeChangeStart", clearStorage);
+    return () => {
+      router.events.off("routeChangeStart", clearStorage);
+    };
+  }, []);
+
   const { mutateAsync: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
       const response = await patchBook(data);
