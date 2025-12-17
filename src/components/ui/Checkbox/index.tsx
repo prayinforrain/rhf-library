@@ -14,6 +14,10 @@ const CheckboxWrapper = styled.input`
   width: 1.2rem;
   height: 1.2rem;
   border-radius: 0.2rem;
+
+  &.error {
+    border-color: red;
+  }
 `;
 
 const CheckboxLabel = styled.span`

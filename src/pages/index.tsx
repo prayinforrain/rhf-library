@@ -1,5 +1,6 @@
 import BookList from "@/components/book/BookList";
 import Button from "@/components/ui/Button";
+import { getBooks } from "@/services/book";
 import { BookRecord } from "@/types/book";
 import styled from "@emotion/styled";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +22,7 @@ const Header = styled.div`
 export default function Home() {
   const { data: books } = useQuery<BookRecord[]>({
     queryKey: ["books"],
-    queryFn: () => fetch("/api/book").then((res) => res.json()),
+    queryFn: () => getBooks(),
   });
 
   return (

@@ -18,6 +18,12 @@ const InputWrapper = styled.input`
     opacity: 0.5;
     background-color: ${colors.grey[10]};
   }
+
+  &:invalid,
+  &.error {
+    border-color: red;
+    outline: none;
+  }
 `;
 
 const Input = ({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) => {

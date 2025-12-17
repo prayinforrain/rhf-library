@@ -18,6 +18,10 @@ const TextareaWrapper = styled.textarea`
     opacity: 0.5;
     background-color: ${colors.grey[10]};
   }
+
+  &.error {
+    border-color: red;
+  }
 `;
 
 const Textarea = ({

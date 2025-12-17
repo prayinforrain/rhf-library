@@ -10,7 +10,7 @@ export default function handler(
   if (req.method === "GET") {
     const { id } = req.query;
     const book = BookRecords.find((book) => book.id === id);
-    if (!book) {
+    if (book == null) {
       res.status(404).json({ error: "Book not found" });
       return;
     }
@@ -23,7 +23,7 @@ export default function handler(
     const { id } = req.query;
     const book = BookRecords.find((b) => b.id === id);
     const index = BookRecords.findIndex((b) => b.id === id);
-    if (!book) {
+    if (book == null) {
       res.status(404).json({ error: "Book not found" });
       return;
     }
@@ -36,7 +36,7 @@ export default function handler(
     const { id } = req.query;
     const book = BookRecords.find((b) => b.id === id);
     const index = BookRecords.findIndex((b) => b.id === id);
-    if (!book) {
+    if (book == null) {
       res.status(404).json({ error: "Book not found" });
       return;
     }

@@ -29,6 +29,9 @@ const RadioInput = styled.input`
     border: 0.4em solid ${colors.primary[50]};
     background-color: ${colors.primary[0]};
   }
+  &.error {
+    border-color: red;
+  }
 `;
 
 const RadioLabel = styled.span`

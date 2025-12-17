@@ -11,6 +11,10 @@ import QuoteForm from "./form/QuoteForm";
 import PublicForm from "./form/PublicForm";
 import { NEW_BOOK_DEFAULT_VALUE, NEW_BOOK_ID } from "@/constants/newBook";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { patchBook, postBook } from "@/services/book";
+import Steps from "./form/Steps";
+import useFormStorage from "@/hooks/useFormStorage";
 
 const BookDetailWrapper = styled.div`
   display: flex;
@@ -47,61 +51,119 @@ const BookDetail = ({
     },
   });
 
+  const [step, setStep] = useState(0);
+  const MAX_STEP = 4;
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { handleSubmit } = formMethods;
-  const { mutate: updateBook } = useMutation({
+  const { handleSubmit, watch, reset } = formMethods;
+
+  const { clearStorage } = useFormStorage({
+    storageKey: `book-detail-${book.id}`,
+    watch,
+    reset,
+    setStep,
+    step,
+  });
+
+  useEffect(() => {
+    // 새로고침이 아닌 수단으로 페이지 이탈시 storage 초기화
+    router.events.on("routeChangeStart", clearStorage);
+    return () => {
+      router.events.off("routeChangeStart", clearStorage);
+    };
+  }, []);
+
+  const { mutateAsync: updateBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
-      const response = await fetch(`/api/book/${book.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      const response = await patchBook(data);
+      queryClient.setQueryData(["book", book.id], response);
+      return response;
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["book", book.id] });
-      return response.json();
     },
   });
 
-  const { mutate: createBook } = useMutation({
+  const { mutateAsync: createBook } = useMutation({
     mutationFn: async (data: BookRecord) => {
-      console.log(data);
-      console.log(JSON.stringify(data));
-      const response = await fetch(`/api/book`, {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      const newBook = await response.json();
+      const newBook = await postBook(data);
+      queryClient.setQueryData(["book", newBook.id], newBook);
+      queryClient.setQueryData(["books"], (old: BookRecord[]) => [
+        ...old,
+        newBook,
+      ]);
       router.push(`/${newBook.id}`);
       return newBook;
     },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
   });
 
-  const onSubmit = (data: BookRecord) => {
+  const onSubmit = async (data: BookRecord) => {
     if (book.id === NEW_BOOK_ID) {
-      createBook(data);
+      await createBook(data);
     } else {
-      updateBook(data);
+      await updateBook(data);
     }
+    router.push("/");
+  };
+
+  const onNextStep = async () => {
+    if (step === MAX_STEP) return;
+    const isValid = await formMethods.trigger();
+    if (!isValid) {
+      const firstError = Object.keys(formMethods.formState.errors)[0];
+      formMethods.setFocus(firstError as keyof BookRecord);
+      return;
+    }
+    setStep(step + 1);
   };
 
   return (
     <BookDetailWrapper>
       <BookTitle>{book.title}</BookTitle>
       <FormProvider {...formMethods}>
-        <BookMetaForm />
         <Form onSubmit={handleSubmit(onSubmit)}>
-          {/* 1단계 */}
-          <StatusForm />
-          {/* 2단계 */}
-          <RatingForm />
-          {/* 3단계 */}
-          <ReviewForm />
-          {/* 4단계 */}
-          <QuoteForm />
-          {/* 5단계 */}
-          <PublicForm />
+          <Steps
+            currentStep={step}
+            cases={{
+              0: (
+                <>
+                  <BookMetaForm />
+                  <StatusForm />
+                </>
+              ),
+              1: <RatingForm />,
+              2: <ReviewForm />,
+              3: <QuoteForm />,
+              4: <PublicForm />,
+            }}
+          />
           <ButtonGroup>
-            <Button type="submit">저장</Button>
+            <Button
+              type="button"
+              onClick={() => setStep(step - 1)}
+              disabled={step === 0}
+            >
+              이전
+            </Button>
+            {step !== MAX_STEP ? (
+              <Button
+                key="nextButton"
+                type="button"
+                onClick={onNextStep}
+                disabled={step === MAX_STEP}
+              >
+                다음
+              </Button>
+            ) : (
+              <Button key="submitButton" type="submit">
+                저장
+              </Button>
+            )}
           </ButtonGroup>
         </Form>
       </FormProvider>

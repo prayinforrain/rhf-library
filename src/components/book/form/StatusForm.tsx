@@ -1,11 +1,16 @@
-import Radio from "@/components/ui/Radio/Radio";
+import Radio from "@/components/ui/Radio";
 import { Field, FieldLabel, RowGroup } from "./Field";
 import { READING_STATUS } from "@/constants/readingStatus";
 import { useFormContext, useWatch } from "react-hook-form";
 import Input from "@/components/ui/Input";
+import ErrorWrapper from "./ErrorWrapper";
 
 const StatusForm = () => {
-  const { register, control } = useFormContext();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext();
   const bookStatus = useWatch({ control, name: "readingStatus" });
   return (
     <>
@@ -37,16 +42,30 @@ const StatusForm = () => {
       <Field>
         <FieldLabel>독서 기간</FieldLabel>
         <RowGroup>
-          <Input
-            type="date"
-            {...register("startDate")}
-            disabled={bookStatus === READING_STATUS.WANT_TO_READ}
-          />
-          <Input
-            type="date"
-            {...register("endDate")}
-            disabled={bookStatus !== READING_STATUS.FINISHED}
-          />
+          <ErrorWrapper error={errors.startDate}>
+            <Input
+              type="date"
+              {...register("startDate", {
+                required: {
+                  value: bookStatus !== READING_STATUS.WANT_TO_READ,
+                  message: "시작 날짜를 입력해주세요.",
+                },
+              })}
+              disabled={bookStatus === READING_STATUS.WANT_TO_READ}
+            />
+          </ErrorWrapper>
+          <ErrorWrapper error={errors.endDate}>
+            <Input
+              type="date"
+              {...register("endDate", {
+                required: {
+                  value: bookStatus === READING_STATUS.FINISHED,
+                  message: "종료 날짜를 입력해주세요.",
+                },
+              })}
+              disabled={bookStatus !== READING_STATUS.FINISHED}
+            />
+          </ErrorWrapper>
         </RowGroup>
       </Field>
     </>
